@@ -43,7 +43,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 set list_projs [get_projects -quiet]
 if { $list_projs eq "" } {
-   create_project project_1 myproj -part xc7a50tfgg484-1
+   create_project project_1 myproj -part xc7a50tfgg484-2
 }
 
 
@@ -156,21 +156,13 @@ proc create_root_design { parentCell } {
 
   # Create ports
   set axi_aclk [ create_bd_port -dir I -type clk axi_aclk ]
-  set_property -dict [ list \
-CONFIG.FREQ_HZ {100000000} \
- ] $axi_aclk
   set axi_aresetn [ create_bd_port -dir I -type rst axi_aresetn ]
   set axi_error [ create_bd_port -dir O axi_error ]
   set axi_txn [ create_bd_port -dir I axi_txn ]
-  set txn_done [ create_bd_port -dir O txn_done ]
+  set axi_txn_done [ create_bd_port -dir O axi_txn_done ]
 
-  # Create instance: axi_bfm1_0, and set properties
-  set axi_bfm1_0 [ create_bd_cell -type ip -vlnv user.org:user:axi_bfm1:1.0 axi_bfm1_0 ]
-  set_property -dict [ list \
-CONFIG.C_M00_AXI_START_DATA_VALUE {0xc0000000} \
-CONFIG.C_M00_AXI_TARGET_SLAVE_BASE_ADDR {0xc0000000} \
-CONFIG.C_M00_AXI_TRANSACTIONS_NUM {8} \
- ] $axi_bfm1_0
+  # Create instance: axi_bfm_0, and set properties
+  set axi_bfm_0 [ create_bd_cell -type ip -vlnv user.org:user:axi_bfm:1.0 axi_bfm_0 ]
 
   # Create instance: axi_bram_ctrl_0, and set properties
   set axi_bram_ctrl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.0 axi_bram_ctrl_0 ]
@@ -178,60 +170,60 @@ CONFIG.C_M00_AXI_TRANSACTIONS_NUM {8} \
 CONFIG.SINGLE_PORT_BRAM {1} \
  ] $axi_bram_ctrl_0
 
-  # Create instance: axi_bram_ctrl_0_bram, and set properties
-  set axi_bram_ctrl_0_bram [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.3 axi_bram_ctrl_0_bram ]
-  set_property -dict [ list \
-CONFIG.use_bram_block {BRAM_Controller} \
- ] $axi_bram_ctrl_0_bram
-
-  # Need to retain value_src of defaults
-  set_property -dict [ list \
-CONFIG.use_bram_block.VALUE_SRC {DEFAULT} \
- ] $axi_bram_ctrl_0_bram
-
   # Create instance: axi_interconnect_0, and set properties
   set axi_interconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0 ]
   set_property -dict [ list \
 CONFIG.NUM_MI {1} \
  ] $axi_interconnect_0
 
+  # Create instance: blk_mem_gen_0, and set properties
+  set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.3 blk_mem_gen_0 ]
+  set_property -dict [ list \
+CONFIG.use_bram_block {BRAM_Controller} \
+ ] $blk_mem_gen_0
+
+  # Need to retain value_src of defaults
+  set_property -dict [ list \
+CONFIG.use_bram_block.VALUE_SRC {DEFAULT} \
+ ] $blk_mem_gen_0
+
   # Create interface connections
-  connect_bd_intf_net -intf_net S00_AXI_1 [get_bd_intf_pins axi_bfm1_0/M00_AXI] [get_bd_intf_pins axi_interconnect_0/S00_AXI]
-  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins axi_bram_ctrl_0_bram/BRAM_PORTA]
+  connect_bd_intf_net -intf_net axi_bfm_0_M00_AXI [get_bd_intf_pins axi_bfm_0/M00_AXI] [get_bd_intf_pins axi_interconnect_0/S00_AXI]
+  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_pins axi_interconnect_0/M00_AXI]
 
   # Create port connections
-  connect_bd_net -net axi_aclk_1 [get_bd_ports axi_aclk] [get_bd_pins axi_bfm1_0/m00_axi_aclk] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK]
-  connect_bd_net -net axi_aresetn_1 [get_bd_ports axi_aresetn] [get_bd_pins axi_bfm1_0/m00_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN]
-  connect_bd_net -net axi_bfm1_0_m00_axi_error [get_bd_ports axi_error] [get_bd_pins axi_bfm1_0/m00_axi_error]
-  connect_bd_net -net axi_bfm1_0_m00_axi_txn_done [get_bd_ports txn_done] [get_bd_pins axi_bfm1_0/m00_axi_txn_done]
-  connect_bd_net -net m00_axi_init_axi_txn_1 [get_bd_ports axi_txn] [get_bd_pins axi_bfm1_0/m00_axi_init_axi_txn]
+  connect_bd_net -net axi_bfm_0_m00_axi_error [get_bd_ports axi_error] [get_bd_pins axi_bfm_0/m00_axi_error]
+  connect_bd_net -net axi_bfm_0_m00_axi_txn_done [get_bd_ports axi_txn_done] [get_bd_pins axi_bfm_0/m00_axi_txn_done]
+  connect_bd_net -net m00_axi_aclk_1 [get_bd_ports axi_aclk] [get_bd_pins axi_bfm_0/m00_axi_aclk] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK]
+  connect_bd_net -net m00_axi_aresetn_1 [get_bd_ports axi_aresetn] [get_bd_pins axi_bfm_0/m00_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN]
+  connect_bd_net -net m00_axi_init_axi_txn_1 [get_bd_ports axi_txn] [get_bd_pins axi_bfm_0/m00_axi_init_axi_txn]
 
   # Create address segments
-  create_bd_addr_seg -range 0x00002000 -offset 0xC0000000 [get_bd_addr_spaces axi_bfm1_0/M00_AXI] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
+  create_bd_addr_seg -range 0x00001000 -offset 0xC0000000 [get_bd_addr_spaces axi_bfm_0/M00_AXI] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
 
   # Perform GUI Layout
   regenerate_bd_layout -layout_string {
    guistr: "# # String gsaved with Nlview 6.5.12  2016-01-29 bk=1.3547 VDI=39 GEI=35 GUI=JA:1.6
 #  -string -flagsOSRD
+preplace port axi_txn_done -pg 1 -y 40 -defaultsOSRD
+preplace port axi_error -pg 1 -y 20 -defaultsOSRD
 preplace port axi_aresetn -pg 1 -y 110 -defaultsOSRD
-preplace port axi_error -pg 1 -y 10 -defaultsOSRD
-preplace port txn_done -pg 1 -y 30 -defaultsOSRD
 preplace port axi_txn -pg 1 -y 130 -defaultsOSRD
 preplace port axi_aclk -pg 1 -y 90 -defaultsOSRD
-preplace inst axi_bram_ctrl_0_bram -pg 1 -lvl 4 -y 170 -defaultsOSRD
+preplace inst blk_mem_gen_0 -pg 1 -lvl 4 -y 170 -defaultsOSRD
+preplace inst axi_bfm_0 -pg 1 -lvl 1 -y 110 -defaultsOSRD
 preplace inst axi_interconnect_0 -pg 1 -lvl 2 -y 150 -defaultsOSRD
-preplace inst axi_bfm1_0 -pg 1 -lvl 1 -y 110 -defaultsOSRD
 preplace inst axi_bram_ctrl_0 -pg 1 -lvl 3 -y 170 -defaultsOSRD
-preplace netloc axi_aclk_1 1 0 3 20 30 360 270 NJ
-preplace netloc axi_bfm1_0_m00_axi_error 1 1 4 NJ 10 NJ 10 NJ 10 NJ
 preplace netloc axi_bram_ctrl_0_BRAM_PORTA 1 3 1 NJ
-preplace netloc axi_aresetn_1 1 0 3 30 40 380 280 NJ
-preplace netloc S00_AXI_1 1 1 1 N
-preplace netloc axi_bfm1_0_m00_axi_txn_done 1 1 4 NJ 30 NJ 30 NJ 30 NJ
-preplace netloc axi_interconnect_0_M00_AXI 1 2 1 NJ
+preplace netloc m00_axi_aresetn_1 1 0 3 20 20 360 280 NJ
+preplace netloc axi_bfm_0_m00_axi_error 1 1 4 NJ 20 NJ 20 NJ 20 NJ
+preplace netloc m00_axi_aclk_1 1 0 3 30 40 380 270 NJ
+preplace netloc axi_bfm_0_m00_axi_txn_done 1 1 4 NJ 30 NJ 30 NJ 30 NJ
+preplace netloc axi_interconnect_0_M00_AXI 1 2 1 N
+preplace netloc axi_bfm_0_M00_AXI 1 1 1 N
 preplace netloc m00_axi_init_axi_txn_1 1 0 1 NJ
-levelinfo -pg 1 0 190 520 800 1040 1170 -top -10 -bot 290
+levelinfo -pg 1 0 190 520 800 1040 1170 -top 0 -bot 290
 ",
 }
 

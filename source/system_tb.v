@@ -2,7 +2,7 @@
 
 module system_tb();
 
-    logic axi_aresetn, axi_error, axi_txn, txn_done;
+    logic axi_aresetn, axi_error, axi_txn, axi_txn_done;
     
     localparam clk_period = 10;
     logic   axi_aclk = 0;
@@ -13,7 +13,7 @@ module system_tb();
         axi_txn = 0;
         #(clk_period*10);
         axi_aresetn = 1;
-         #(clk_period*10);
+        #(clk_period*10);
         axi_txn = 1;
         #(clk_period*1);
         axi_txn = 0;

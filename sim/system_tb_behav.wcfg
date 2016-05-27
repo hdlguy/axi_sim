@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="system_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="axi_bram_ctrl_funcs" />
+            <top_module name="glbl" />
+            <top_module name="system_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="441500001fs"></ZoomEndTime>
+      <Cursor1Time time="0fs"></Cursor1Time>
+   </zoom_setting>
+   <WVObjectSize size="13" />
+   <wvobject type="logic" fp_name="/system_tb/axi_aresetn">
+      <obj_property name="ElementShortName">axi_aresetn</obj_property>
+      <obj_property name="ObjectShortName">axi_aresetn</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/axi_aclk">
+      <obj_property name="ElementShortName">axi_aclk</obj_property>
+      <obj_property name="ObjectShortName">axi_aclk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/axi_txn">
+      <obj_property name="ElementShortName">axi_txn</obj_property>
+      <obj_property name="ObjectShortName">axi_txn</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/axi_error">
+      <obj_property name="ElementShortName">axi_error</obj_property>
+      <obj_property name="ObjectShortName">axi_error</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/axi_txn_done">
+      <obj_property name="ElementShortName">axi_txn_done</obj_property>
+      <obj_property name="ObjectShortName">axi_txn_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider12" type="divider">
+      <obj_property name="label">uut</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_ADDR">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_ADDR[11:0]</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_ADDR[11:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_CLK">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_CLK</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_CLK</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_DIN">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_DIN[31:0]</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_DIN[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_DOUT">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_DOUT[31:0]</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_DOUT[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_EN">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_EN</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_RST">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_RST</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_RST</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_tb/system_i/axi_bram_ctrl_0_BRAM_PORTA_WE">
+      <obj_property name="ElementShortName">axi_bram_ctrl_0_BRAM_PORTA_WE[3:0]</obj_property>
+      <obj_property name="ObjectShortName">axi_bram_ctrl_0_BRAM_PORTA_WE[3:0]</obj_property>
+   </wvobject>
+</wave_config>
